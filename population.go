@@ -5,10 +5,10 @@ import (
   "sort"
 )
 
-const mutation = 0.5
+const mutation = 0.4
 const death = 0.6
-const MaxPopulation = 50000
-const repopulation = 0.5
+const MaxPopulation = 10000
+const repopulation = 0.8
 
 // Population Methods
 type Population []Chromosome
@@ -45,18 +45,17 @@ func (this Population) Evolve() Population {
 }
 
 func (this Population) Recombine() Population {
-  var newPopulation Population
   length := len(this)
-  newPopulationChannel := make(chan Chromosome, length)
-  // repopulating := float64(length) * float64(death)
-  for i := 1; i < length; i++ {
+  recombinatating := int(float64(length) * float64(repopulation))
+  newPopulationChannel := make(chan Chromosome, recombinatating)
+  for i := 1; i < recombinatating; i++ {
     index1, index2 := rand.Intn(length-1), rand.Intn(length-1)
     go this[index1].Recombine(newPopulationChannel, this[index2])
   }
-  for i := 1; i < length; i++ {
-    newPopulation = append(newPopulation, <-newPopulationChannel)
+  for i := 1; i < recombinatating; i++ {
+    this = append(this, <-newPopulationChannel)
   }
-  return newPopulation
+  return this
 }
 
 func (this Population) Kill() Population {

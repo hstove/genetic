@@ -9,12 +9,14 @@ import (
 )
 
 const chars = "abcdefghijklmnopqrstuvwxyz"
-const goal = "hellofkdflasjf"
+const goal = "hankstoeverisabadgolangprogrammer"
 
 // Chromosome Implementation
 type RandomString struct {
   Member string
 }
+
+var memoizedFitness = make(map[string]int16)
 
 func (this RandomString) String() (str string){
   return fmt.Sprintf("{Member: %s | Fitness: %d}", this.Member, this.Fitness())
@@ -30,6 +32,10 @@ func NewRandomString() *RandomString {
 }
 
 func (r RandomString) Fitness() int16{
+  if val, ok := memoizedFitness[r.Member]; ok {
+    // fmt.Println(len(memoizedFitness))
+    return val
+  }
   fitness := int16(0)
   for i := 0; i < len(goal); i++ {
     difference := int16(goal[i]) - int16(r.Member[i])
@@ -39,14 +45,17 @@ func (r RandomString) Fitness() int16{
       fitness += difference
     }
   }
-  return fitness * -1
+  fitness *= -1
+  memoizedFitness[r.Member] = fitness
+  return fitness
 }
 
 func (r RandomString) Recombine(newPopulation chan<- genetic.Chromosome, chromosome genetic.Chromosome) {
   var other *RandomString = chromosome.(*RandomString)
   length := len(goal)
-  newMember := string(r.Member[0:length/2])
-  newMember += string(other.Member[length/2:length])
+  split := rand.Intn(length-1)
+  newMember := string(r.Member[0:split])
+  newMember += string(other.Member[split:length])
   newPopulation <- &RandomString{newMember}
 }
 
