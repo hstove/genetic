@@ -32,7 +32,6 @@ func NewRandomString() *RandomString {
 
 func (r RandomString) Fitness() int16{
   if val, ok := memoizedFitness[r.Member]; ok {
-    // fmt.Println(len(memoizedFitness))
     return val
   }
   fitness := int16(0)
