@@ -4,7 +4,6 @@ import (
   "fmt"
   "math/rand"
   "time"
-  // "sort"
   "github.com/hstove/genetic"
 )
 
@@ -76,8 +75,9 @@ func main(){
     population = population.Evolve()
     fmt.Println(i, population.BestFit(), population[len(population) - 1], len(population))
     if population.BestFit().Fitness() == 0 {
-      fmt.Printf("Found Champion after %d Generations", i)
+      fmt.Println(fmt.Sprintf("Found Champion after %d Generations", i))
       break
     }
   }
 }
+
